@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAU Lab - Official D2C Store</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- HEADER & NAVBAR -->
+    <header>
+        <div class="container nav-container">
+            <h1 class="logo">RAU <span>Lab</span></h1>
+            <nav>
+                <a href="#about">Tentang Kami</a>
+                <a href="#products">Katalog (9 Varian)</a>
+                <div class="cart-icon" onclick="toggleCart()">🛒 Keranjang (<span id="cart-count">0</span>)</div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- HERO SECTION -->
+    <section class="hero">
+        <div class="container hero-content">
+            <h2>RAU Lab Lip Serum Brightening</h2>
+            <p>Perawatan bibir harian berformula ringan non-lengket, melembapkan tahan lama, dan mencerahkan alami.</p>
+            <a href="#products" class="btn-primary">Belanja Sekarang</a>
+        </div>
+    </section>
+
+    <!-- ABOUT SECTION -->
+    <section id="about" class="about">
+        <div class="container">
+            <h3>Tentang RAU Lab</h3>
+            <p>Brand kecantikan lokal khusus pelajar dan mahasiswa. Menghadirkan inovasi 9 varian lip serum berkualitas tinggi dengan harga ramah di kantong.</p>
+        </div>
+    </section>
+
+    <!-- KATALOG 9 PRODUK -->
+    <section id="products" class="products">
+        <div class="container">
+            <h3 class="section-title">Katalog 9 Varian Produk (Rp35.000 / unit)</h3>
+            <div class="product-grid" id="product-list">
+                <!-- Produk akan dimuat otomatis via JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- KERANJANG BELANJA MODAL -->
+    <div id="cart-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="toggleCart()">&times;</span>
+            <h3>Keranjang Belanja Kamu</h3>
+            <div id="cart-items">
+                <p>Keranjang masih kosong.</p>
+            </div>
+            <div class="cart-total">
+                <strong>Total: Rp <span id="total-price">0</span></strong>
+            </div>
+            <button onclick="checkoutWA()" class="btn-checkout">Checkout via WhatsApp</button>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 RAU Lab Official D2C Store. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,254 +1,229 @@
-/* RAU Lab — cart, catalog, checkout */
+/* RAU Lab Store — static GitHub Pages edition */
 "use strict";
 
-const WHATSAPP_NUMBER = "6281234567890";
-const STORAGE_KEY = "rauLabCart";
-
+const WHATSAPP_NUMBER = "6281234567890"; // Ganti jika nomor admin berubah
+const CART_KEY = "rauLabCart";
 const products = [
-  { id:"original-clear", name:"RAU Lab Original Clear", price:35000, description:"Kilau bening untuk tampilan bibir natural.", tag:"EVERYDAY", image:"https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?auto=format&fit=crop&w=700&q=80" },
-  { id:"coffee-scrub", name:"RAU Lab Coffee Scrub", price:36000, description:"Nuansa hangat yang effortless.", tag:"WARM TONE", image:"https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=700&q=80" },
-  { id:"rose-pink", name:"RAU Lab Rose Pink", price:37000, description:"Sentuhan pink lembut yang manis.", tag:"SOFT PINK", image:"https://images.unsplash.com/photo-1586495777744-4413f21062fa?auto=format&fit=crop&w=700&q=80" },
-  { id:"peach-nude", name:"RAU Lab Peach Nude", price:38000, description:"Warna peach nude untuk kesan fresh.", tag:"NUDE GLOW", image:"https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=700&q=80" },
-  { id:"mint-fresh", name:"RAU Lab Mint Fresh", price:38000, description:"Pilihan clean untuk ritual harian.", tag:"FRESH FEEL", image:"https://images.unsplash.com/photo-1601049541289-9b1b7bbbfe19?auto=format&fit=crop&w=700&q=80" },
-  { id:"honey-glow", name:"RAU Lab Honey Glow", price:39000, description:"Kilau hangat dengan karakter lembut.", tag:"GOLDEN HOUR", image:"https://images.unsplash.com/photo-1599733589046-833d8d2b9d9c?auto=format&fit=crop&w=700&q=80" },
-  { id:"cherry-red", name:"RAU Lab Cherry Red", price:40000, description:"Merah cerah untuk tampilan lebih berani.", tag:"BOLD MOOD", image:"https://images.unsplash.com/photo-1512496015851-a90fb38ba796?auto=format&fit=crop&w=700&q=80" },
-  { id:"berry-plump", name:"RAU Lab Berry Plump", price:41000, description:"Berry tone yang playful dan modern.", tag:"BERRY TONE", image:"https://images.unsplash.com/photo-1591360236480-4ed861025fa1?auto=format&fit=crop&w=700&q=80" },
-  { id:"golden-gleam", name:"RAU Lab Golden Gleam", price:43000, description:"Sentuhan glow untuk momen spesial.", tag:"LIMITED FEEL", image:"https://images.unsplash.com/photo-1607602132700-068258a7b2c2?auto=format&fit=crop&w=700&q=80" }
+  { id:"original-clear", name:"RAU Lab Original Clear", variant:"Original Clear", price:35000, description:"Kilau bening untuk tampilan natural.", tag:"EVERYDAY ESSENTIAL", image:"images/original-clear.webp" },
+  { id:"coffee-scrub", name:"RAU Lab Coffee Scrub", variant:"Coffee Scrub", price:36000, description:"Nuansa hangat untuk daily look.", tag:"WARM MOOD", image:"images/coffee-scrub.webp" },
+  { id:"rose-pink", name:"RAU Lab Rose Pink", variant:"Rose Pink", price:37000, description:"Pink lembut yang manis dan fresh.", tag:"SOFT PINK", image:"images/rose-pink.webp" },
+  { id:"peach-nude", name:"RAU Lab Peach Nude", variant:"Peach Nude", price:38000, description:"Peach nude untuk kesan effortless.", tag:"NUDE GLOW", image:"images/peach-nude.webp" },
+  { id:"mint-fresh", name:"RAU Lab Mint Fresh", variant:"Mint Fresh", price:38000, description:"Pilihan clean untuk ritual harian.", tag:"FRESH PICK", image:"images/mint-fresh.webp" },
+  { id:"honey-glow", name:"RAU Lab Honey Glow", variant:"Honey Glow", price:39000, description:"Sentuhan hangat dengan kilau lembut.", tag:"GOLDEN HOUR", image:"images/honey-glow.webp" },
+  { id:"cherry-red", name:"RAU Lab Cherry Red", variant:"Cherry Red", price:40000, description:"Merah cerah untuk mood yang berani.", tag:"BOLD MOOD", image:"images/cherry-red.webp" },
+  { id:"berry-plump", name:"RAU Lab Berry Plump", variant:"Berry Plump", price:41000, description:"Berry tone yang playful dan modern.", tag:"BERRY TONE", image:"images/berry-plump.webp" },
+  { id:"golden-gleam", name:"RAU Lab Golden Gleam", variant:"Golden Gleam", price:43000, description:"Kilau ekstra untuk momen spesial.", tag:"SPECIAL GLOW", image:"images/golden-gleam.webp" }
 ];
-
-const rupiah = amount => new Intl.NumberFormat("id-ID", {
-  style:"currency", currency:"IDR", maximumFractionDigits:0
-}).format(amount);
-
-const $ = selector => document.querySelector(selector);
+// Supabase: isi URL project dan publishable/anon key dari Dashboard > Project Settings > API.
+// JANGAN PERNAH memasukkan service_role/secret key ke website frontend.
+const SUPABASE_URL = "PASTE_YOUR_SUPABASE_PROJECT_URL_HERE";
+const SUPABASE_ANON_KEY = "PASTE_YOUR_SUPABASE_PUBLISHABLE_OR_ANON_KEY_HERE";
+const publishedReviews = [];
+let supabaseClient = null;
+let reviewsChannel = null;
+const $ = (selector) => document.querySelector(selector);
+const rupiah = (amount) => new Intl.NumberFormat("id-ID", { style:"currency", currency:"IDR", maximumFractionDigits:0 }).format(amount);
 const productGrid = $("#product-grid");
+const cartItemsEl = $("#cart-items");
 const cartDrawer = $("#cart-drawer");
 const cartOverlay = $("#cart-overlay");
-const cartItemsEl = $("#cart-items");
-const toast = $("#toast");
-
 let cart = loadCart();
 
 function loadCart() {
   try {
-    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
-    if (!Array.isArray(saved)) return [];
-    return saved.filter(item => products.some(p => p.id === item.id) && Number.isInteger(item.qty) && item.qty > 0);
-  } catch {
-    return [];
-  }
+    const value = JSON.parse(localStorage.getItem(CART_KEY) || "[]");
+    return Array.isArray(value) ? value.filter(x => products.some(p => p.id === x.id) && Number.isInteger(x.qty) && x.qty > 0) : [];
+  } catch { return []; }
 }
-
-function saveCart() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(cart));
-}
-
-function getProduct(id) {
-  return products.find(product => product.id === id);
-}
-
-function cartQuantity() {
-  return cart.reduce((sum, item) => sum + item.qty, 0);
-}
-
-function cartTotal() {
-  return cart.reduce((sum, item) => sum + getProduct(item.id).price * item.qty, 0);
-}
-
-function showToast(message) {
-  toast.textContent = message;
-  toast.classList.add("show");
-  window.clearTimeout(showToast.timeout);
-  showToast.timeout = window.setTimeout(() => toast.classList.remove("show"), 2200);
+function saveCart() { localStorage.setItem(CART_KEY, JSON.stringify(cart)); }
+function getProduct(id) { return products.find(p => p.id === id); }
+function totalQty() { return cart.reduce((sum, item) => sum + item.qty, 0); }
+function totalPrice() { return cart.reduce((sum, item) => sum + getProduct(item.id).price * item.qty, 0); }
+function toast(message) {
+  const el = $("#toast"); if (!el) return;
+  el.textContent = message; el.classList.add("show");
+  clearTimeout(toast.timer); toast.timer = setTimeout(() => el.classList.remove("show"), 2400);
 }
 
 function renderProducts() {
-  productGrid.innerHTML = products.map((product, index) => `
-    <article class="product-card">
-      <div class="product-image-wrap">
-        <img class="product-image" src="${product.image}" alt="${product.name}" loading="lazy"
-          onerror="this.src='https://placehold.co/700x875/f0eae4/77736c?text=RAU+Lab';" />
-        <span class="product-tag">${product.tag}</span>
+  productGrid.innerHTML = products.map((p, i) => `
+    <article class="product-card" style="--card-index:${i}">
+      <a class="product-image-wrap" href="#kontak" aria-label="Tanya tentang ${p.name}">
+        <img class="product-image" src="${p.image}" alt="Inspirasi tampilan ${p.variant}" loading="lazy" onerror="this.src='https://placehold.co/700x875/f0eae4/77736c?text=RAU+Lab'" />
+        <span class="product-tag">${p.tag}</span><span class="product-number">0${i+1}</span>
+      </a>
+      <div class="product-info">
+        <div><h3 class="product-name">${p.name}</h3><p class="product-description">${p.description}</p></div>
+        <button class="add-button" data-add="${p.id}" aria-label="Tambah ${p.name} ke keranjang">+</button>
       </div>
-      <div class="mt-4 flex items-start justify-between gap-2">
-        <div>
-          <h3 class="product-name">${product.name}</h3>
-          <p class="product-description">${product.description}</p>
-        </div>
-        <button class="add-button shrink-0" data-add="${product.id}" aria-label="Tambah ${product.name} ke keranjang">+</button>
-      </div>
-      <p class="product-price mt-3">${rupiah(product.price)}</p>
-    </article>
-  `).join("");
+      <p class="product-price">${rupiah(p.price)}</p>
+    </article>`).join("");
 }
-
-function addToCart(id) {
-  const existing = cart.find(item => item.id === id);
-  if (existing) existing.qty += 1;
-  else cart.push({ id, qty:1 });
-  saveCart();
-  renderCart();
-  showToast("Produk ditambahkan ke keranjang");
-}
-
-function changeQuantity(id, amount) {
-  const item = cart.find(entry => entry.id === id);
-  if (!item) return;
-  item.qty += amount;
-  if (item.qty <= 0) cart = cart.filter(entry => entry.id !== id);
-  saveCart();
-  renderCart();
-}
-
-function removeFromCart(id) {
-  cart = cart.filter(item => item.id !== id);
-  saveCart();
-  renderCart();
-  showToast("Produk dihapus dari keranjang");
-}
-
 function renderCart() {
-  $("#cart-count").textContent = cartQuantity();
-  $("#cart-total").textContent = rupiah(cartTotal());
-  $("#checkout-total").textContent = rupiah(cartTotal());
-
-  if (cart.length === 0) {
-    cartItemsEl.innerHTML = '<div class="cart-empty">Your bag is waiting.</div>';
-    return;
-  }
-
+  $("#cart-count").textContent = totalQty();
+  $("#cart-total").textContent = rupiah(totalPrice());
+  $("#checkout-total").textContent = rupiah(totalPrice());
+  if (!cart.length) { cartItemsEl.innerHTML = '<div class="cart-empty"><span>♡</span><p>Keranjangmu masih kosong.</p><a href="#katalog" class="text-xs underline" id="empty-shop-link">Temukan lip mood kamu</a></div>'; return; }
   cartItemsEl.innerHTML = cart.map(item => {
-    const product = getProduct(item.id);
-    return `
-      <div class="cart-line">
-        <img src="${product.image}" alt="${product.name}" />
-        <div>
-          <h3 class="cart-line-title">${product.name}</h3>
-          <p class="mt-1 text-xs">${rupiah(product.price)}</p>
-          <div class="qty-control">
-            <button type="button" data-qty="-1" data-id="${item.id}" aria-label="Kurangi jumlah">−</button>
-            <span>${item.qty}</span>
-            <button type="button" data-qty="1" data-id="${item.id}" aria-label="Tambah jumlah">+</button>
-            <button type="button" class="remove-button ml-2" data-remove="${item.id}">Hapus</button>
-          </div>
-        </div>
-        <strong class="text-xs">${rupiah(product.price * item.qty)}</strong>
-      </div>
-    `;
+    const p = getProduct(item.id);
+    return `<article class="cart-line"><img src="${p.image}" alt="${p.name}"/><div class="cart-line-copy"><h3 class="cart-line-title">${p.name}</h3><p>${rupiah(p.price)}</p><div class="qty-control"><button data-qty="-1" data-id="${p.id}" aria-label="Kurangi">−</button><span>${item.qty}</span><button data-qty="1" data-id="${p.id}" aria-label="Tambah">+</button><button class="remove-button" data-remove="${p.id}">Hapus</button></div></div><strong>${rupiah(p.price * item.qty)}</strong></article>`;
   }).join("");
 }
-
+function addToCart(id) {
+  const found = cart.find(x => x.id === id); if (found) found.qty++; else cart.push({id, qty:1});
+  saveCart(); renderCart(); toast("Ditambahkan ke keranjang ♡");
+}
+function changeQty(id, amount) {
+  const item = cart.find(x => x.id === id); if (!item) return;
+  item.qty += amount; if (item.qty <= 0) cart = cart.filter(x => x.id !== id);
+  saveCart(); renderCart();
+}
 function openCart() {
-  cartOverlay.classList.remove("hidden");
-  requestAnimationFrame(() => cartOverlay.classList.add("visible"));
-  cartDrawer.classList.add("open");
-  cartDrawer.setAttribute("aria-hidden", "false");
-  cartOverlay.setAttribute("aria-hidden", "false");
-  document.body.classList.add("overflow-hidden");
+  cartOverlay.classList.remove("hidden"); requestAnimationFrame(() => cartOverlay.classList.add("visible"));
+  cartDrawer.classList.add("open"); cartDrawer.setAttribute("aria-hidden", "false"); document.body.classList.add("overflow-hidden");
 }
-
 function closeCart() {
-  cartDrawer.classList.remove("open");
-  cartOverlay.classList.remove("visible");
-  cartDrawer.setAttribute("aria-hidden", "true");
-  cartOverlay.setAttribute("aria-hidden", "true");
-  document.body.classList.remove("overflow-hidden");
-  window.setTimeout(() => cartOverlay.classList.add("hidden"), 250);
+  cartDrawer.classList.remove("open"); cartOverlay.classList.remove("visible"); cartDrawer.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("overflow-hidden"); setTimeout(() => cartOverlay.classList.add("hidden"), 260);
 }
-
 function openCheckout() {
-  if (cart.length === 0) {
-    showToast("Keranjang masih kosong");
+  if (!cart.length) { toast("Keranjang masih kosong"); return; }
+  closeCart(); $("#checkout").classList.remove("hidden"); document.body.classList.add("overflow-hidden"); window.scrollTo({top:0, behavior:"smooth"});
+}
+function closeCheckout() { $("#checkout").classList.add("hidden"); document.body.classList.remove("overflow-hidden"); }
+function orderMessage(data) {
+  const lines = cart.map((item, i) => { const p = getProduct(item.id); return `${i+1}. ${p.name}\n   ${item.qty} x ${rupiah(p.price)} = ${rupiah(p.price * item.qty)}`; });
+  return ["Halo RAU Lab! Saya ingin memesan:", "", ...lines, "", `*TOTAL: ${rupiah(totalPrice())}*`, "", "*DETAIL PENERIMA*", `Nama: ${data.name}`, `No. WhatsApp: ${data.phone}`, `Alamat: ${data.address}`, `Catatan: ${data.note || "-"}`, "", "Mohon konfirmasi pesanan dan ongkos kirim. Terima kasih!"].join("\n");
+}
+
+function initReviews() {
+  const productSelect = $("#review-product"); const filter = $("#review-filter");
+  if (productSelect) products.forEach(p => productSelect.add(new Option(p.variant, p.variant)));
+  if (filter) products.forEach(p => filter.add(new Option(p.variant, p.variant)));
+
+  const configured = window.supabase &&
+    SUPABASE_URL.startsWith("https://") &&
+    !SUPABASE_URL.includes("PASTE_YOUR") &&
+    SUPABASE_ANON_KEY.length > 20 &&
+    !SUPABASE_ANON_KEY.includes("PASTE_YOUR");
+
+  if (!configured) {
+    setReviewMessage("Hubungkan Supabase terlebih dahulu dengan mengisi URL project dan publishable/anon key di script.js.");
+    $("#review-submit").disabled = true;
+    $("#review-submit").classList.add("opacity-50", "cursor-not-allowed");
+    renderReviews();
     return;
   }
-  closeCart();
-  $("#checkout").classList.remove("hidden");
-  document.body.classList.add("overflow-hidden");
-  window.scrollTo({ top:0, behavior:"smooth" });
+
+  supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  loadReviews();
+  reviewsChannel = supabaseClient
+    .channel("rau-lab-public-reviews")
+    .on("postgres_changes", { event: "*", schema: "public", table: "reviews" }, () => loadReviews())
+    .subscribe();
 }
 
-function closeCheckout() {
-  $("#checkout").classList.add("hidden");
-  document.body.classList.remove("overflow-hidden");
+function setReviewMessage(message, isError = false) {
+  const el = $("#review-form-message");
+  if (!el) return;
+  el.textContent = message;
+  el.classList.toggle("text-red-700", isError);
+  el.classList.toggle("text-rau-muted", !isError);
 }
 
-function buildWhatsAppMessage(formData) {
-  const lines = cart.map((item, index) => {
-    const product = getProduct(item.id);
-    return `${index + 1}. ${product.name}\n   ${item.qty} x ${rupiah(product.price)} = ${rupiah(product.price * item.qty)}`;
+async function loadReviews() {
+  if (!supabaseClient) return;
+  const { data, error } = await supabaseClient
+    .from("reviews")
+    .select("id, name, product, rating, comment, created_at")
+    .order("created_at", { ascending: false })
+    .limit(100);
+  if (error) {
+    setReviewMessage("Belum bisa memuat ulasan. Periksa konfigurasi Supabase dan kebijakan database.", true);
+    console.error("Supabase load reviews:", error.message);
+    return;
+  }
+  publishedReviews.splice(0, publishedReviews.length, ...(data || []));
+  renderReviews();
+}
+
+function renderReviews() {
+  const list = $("#review-list"); if (!list) return;
+  const selected = $("#review-filter")?.value || "";
+  const reviews = publishedReviews.filter(r => !selected || r.product === selected);
+  list.replaceChildren();
+  if (!reviews.length) {
+    const empty = document.createElement("div"); empty.className = "review-empty";
+    empty.textContent = "Belum ada ulasan untuk pilihan ini. Jadilah yang pertama berbagi pengalaman!";
+    list.append(empty);
+  } else reviews.forEach(r => {
+    const card = document.createElement("article"); card.className = "live-review-card";
+    const top = document.createElement("div"); top.className = "review-card-top";
+    const author = document.createElement("strong"); author.textContent = r.name;
+    const stars = document.createElement("span"); stars.className = "live-review-stars"; stars.textContent = "★".repeat(r.rating) + "☆".repeat(5-r.rating);
+    const product = document.createElement("p"); product.className = "live-review-meta"; product.textContent = r.product;
+    const comment = document.createElement("p"); comment.className = "live-review-comment"; comment.textContent = `“${r.comment}”`;
+    const date = document.createElement("p"); date.className = "live-review-meta";
+    date.textContent = r.created_at ? new Date(r.created_at).toLocaleDateString("id-ID", { day:"numeric", month:"long", year:"numeric" }) : "";
+    top.append(author, stars); card.append(top, product, comment, date); list.append(card);
   });
-
-  return [
-    "Halo RAU Lab! Saya ingin memesan:",
-    "",
-    ...lines,
-    "",
-    `*TOTAL: ${rupiah(cartTotal())}*`,
-    "",
-    "*DETAIL PENERIMA*",
-    `Nama: ${formData.name}`,
-    `No. WhatsApp: ${formData.phone}`,
-    `Alamat: ${formData.address}`,
-    `Catatan: ${formData.note || "-"}`,
-    "",
-    "Mohon konfirmasi ketersediaan produk dan ongkos kirim. Terima kasih!"
-  ].join("\n");
+  const count = reviews.length; const average = count ? reviews.reduce((sum,r) => sum + Number(r.rating), 0) / count : 0;
+  $("#review-average").textContent = count ? average.toFixed(1) : "—";
+  $("#review-average-stars").textContent = count ? "★".repeat(Math.round(average)) + "☆".repeat(5-Math.round(average)) : "☆☆☆☆☆";
+  $("#review-count").textContent = `${count} ulasan${selected ? " untuk " + selected : " ditampilkan"}`;
 }
 
-// Event delegation for product and cart controls.
-productGrid.addEventListener("click", event => {
-  const button = event.target.closest("[data-add]");
-  if (button) addToCart(button.dataset.add);
-});
-
-cartItemsEl.addEventListener("click", event => {
-  const quantityButton = event.target.closest("[data-qty]");
-  const removeButton = event.target.closest("[data-remove]");
-  if (quantityButton) changeQuantity(quantityButton.dataset.id, Number(quantityButton.dataset.qty));
-  if (removeButton) removeFromCart(removeButton.dataset.remove);
-});
-
-$("#cart-open").addEventListener("click", openCart);
-$("#cart-close").addEventListener("click", closeCart);
-cartOverlay.addEventListener("click", closeCart);
-$("#checkout-scroll").addEventListener("click", openCheckout);
-$("#checkout-close").addEventListener("click", closeCheckout);
-
-$("#checkout-form").addEventListener("submit", event => {
+async function sendReviewToSupabase(event) {
   event.preventDefault();
-  if (cart.length === 0) {
-    showToast("Keranjang masih kosong");
-    closeCheckout();
+  if (!supabaseClient) {
+    setReviewMessage("Supabase belum dikonfigurasi. Isi URL project dan public key di script.js.", true);
     return;
   }
+  const form = event.currentTarget;
+  const data = new FormData(form);
+  const name = String(data.get("reviewName") || "").trim();
+  const product = String(data.get("reviewProduct") || "");
+  const rating = Number(data.get("reviewRating"));
+  const comment = String(data.get("reviewComment") || "").trim();
+  if (name.length < 2 || name.length > 50 || !products.some(p => p.variant === product) || !Number.isInteger(rating) || rating < 1 || rating > 5 || comment.length < 5 || comment.length > 600) {
+    setReviewMessage("Periksa kembali nama, produk, rating, dan ulasan (5–600 karakter).", true);
+    return;
+  }
+  const button = $("#review-submit");
+  button.disabled = true; button.textContent = "Mengirim ulasan…";
+  setReviewMessage("Mengirim ulasan ke RAU Lab…");
+  const { error } = await supabaseClient.from("reviews").insert([{ name, product, rating, comment }]);
+  button.disabled = false; button.innerHTML = 'Publikasikan ulasan <span>↗</span>';
+  if (error) {
+    console.error("Supabase insert review:", error.message);
+    setReviewMessage("Ulasan belum berhasil dikirim. Coba lagi beberapa saat lagi.", true);
+    return;
+  }
+  form.reset();
+  setReviewMessage("Terima kasih! Ulasanmu sudah dipublikasikan dan akan tampil untuk semua pengunjung.");
+  await loadReviews();
+}
 
-  const formData = Object.fromEntries(new FormData(event.currentTarget).entries());
-  const message = buildWhatsAppMessage(formData);
-  const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
-  window.open(whatsappUrl, "_blank", "noopener,noreferrer");
+productGrid.addEventListener("click", e => { const btn = e.target.closest("[data-add]"); if (btn) { e.preventDefault(); addToCart(btn.dataset.add); } });
+cartItemsEl.addEventListener("click", e => {
+  const q = e.target.closest("[data-qty]"); const r = e.target.closest("[data-remove]");
+  if (q) changeQty(q.dataset.id, Number(q.dataset.qty));
+  if (r) { cart = cart.filter(x => x.id !== r.dataset.remove); saveCart(); renderCart(); toast("Produk dihapus"); }
 });
-
+$("#cart-open").addEventListener("click", openCart); $("#cart-close").addEventListener("click", closeCart); cartOverlay.addEventListener("click", closeCart);
+$("#checkout-scroll").addEventListener("click", openCheckout); $("#checkout-close").addEventListener("click", closeCheckout);
+$("#checkout-form").addEventListener("submit", e => {
+  e.preventDefault(); if (!cart.length) return toast("Keranjang masih kosong");
+  const data = Object.fromEntries(new FormData(e.currentTarget).entries());
+  window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(orderMessage(data))}`, "_blank", "noopener,noreferrer");
+});
+$("#review-form")?.addEventListener("submit", sendReviewToSupabase);
+$("#review-filter")?.addEventListener("change", renderReviews);
 $("#mobile-menu-button").addEventListener("click", () => {
-  const nav = $("#mobile-nav");
-  const isExpanded = $("#mobile-menu-button").getAttribute("aria-expanded") === "true";
-  nav.classList.toggle("hidden", isExpanded);
-  $("#mobile-menu-button").setAttribute("aria-expanded", String(!isExpanded));
+  const nav = $("#mobile-nav"); const expanded = $("#mobile-menu-button").getAttribute("aria-expanded") === "true";
+  nav.classList.toggle("hidden", expanded); $("#mobile-menu-button").setAttribute("aria-expanded", String(!expanded));
 });
-
-$("#mobile-nav").addEventListener("click", event => {
-  if (event.target.closest("a")) {
-    $("#mobile-nav").classList.add("hidden");
-    $("#mobile-menu-button").setAttribute("aria-expanded", "false");
-  }
-});
-
-document.addEventListener("keydown", event => {
-  if (event.key === "Escape") {
-    closeCart();
-    closeCheckout();
-  }
-});
-
+$("#mobile-nav").addEventListener("click", e => { if (e.target.closest("a")) { $("#mobile-nav").classList.add("hidden"); $("#mobile-menu-button").setAttribute("aria-expanded", "false"); } });
+document.addEventListener("keydown", e => { if (e.key === "Escape") { closeCart(); closeCheckout(); } });
 $("#year").textContent = new Date().getFullYear();
-renderProducts();
-renderCart();
+renderProducts(); renderCart(); initReviews();

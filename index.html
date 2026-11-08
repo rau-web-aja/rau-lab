@@ -93,7 +93,7 @@
           <p class="mt-12 text-[10px] tracking-[.2em] text-rau-muted">THOUGHTFULLY MADE · EVERYDAY ESSENTIALS</p>
         </div>
         <div class="hero-image-wrap order-1 md:order-2">
-          <img src="https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?auto=format&fit=crop&w=1100&q=85" alt="Produk kecantikan dengan tampilan minimalis" class="hero-image" />
+          <img src="images/hero-rau-lab.webp" alt="Konsep visual RAU Lab Lip Serum bernuansa blush pink" class="hero-image" />
           <div class="hero-image-note"><span>01 / 09</span><span>THE LIP SERUM EDIT</span></div>
         </div>
       </div>
@@ -146,16 +146,101 @@
       </article>
     </section>
 
-    <!-- Reviews -->
+    <!-- Live Customer Reviews -->
     <section id="ulasan" class="bg-white">
-      <div class="mx-auto max-w-7xl px-5 py-16 text-center md:py-20 lg:px-8">
-        <p class="eyebrow">KIND WORDS</p><h2 class="section-title mt-3">A little <em>love note.</em></h2>
-        <div class="mx-auto mt-9 grid max-w-4xl gap-5 md:grid-cols-3">
-          <blockquote class="review-card"><div class="tracking-[.2em] text-rau-rose">★★★★★</div><p>“Ringan dipakai sehari-hari dan bikin bibir terlihat fresh.”</p><cite>— NAYA</cite></blockquote>
-          <blockquote class="review-card"><div class="tracking-[.2em] text-rau-rose">★★★★★</div><p>“Suka pilihan warnanya. Packaging-nya juga simple dan cantik.”</p><cite>— ALYA</cite></blockquote>
-          <blockquote class="review-card"><div class="tracking-[.2em] text-rau-rose">★★★★★</div><p>“Jadi salah satu item yang selalu ada di pouch aku.”</p><cite>— DITA</cite></blockquote>
+      <div class="mx-auto max-w-7xl px-5 py-16 md:py-20 lg:px-8">
+        <div class="text-center">
+          <p class="eyebrow">KIND WORDS FROM OUR COMMUNITY</p>
+          <h2 class="section-title mt-3">A little <em>love note.</em></h2>
+          <p class="mx-auto mt-4 max-w-xl text-sm leading-7 text-rau-muted">Sudah mencoba RAU Lab? Bagikan pengalamanmu. Ulasan akan tersimpan di database dan langsung terlihat oleh pengunjung lain.</p>
         </div>
-        <p class="mt-5 text-[10px] text-rau-muted">Contoh tampilan ulasan — ganti dengan testimoni pelanggan asli setelah toko aktif.</p>
+
+        <div class="mx-auto mt-10 grid max-w-5xl gap-8 lg:grid-cols-[.85fr_1.15fr]">
+          <form id="review-form" class="review-form">
+            <p class="eyebrow">SHARE YOUR EXPERIENCE</p>
+            <h3 class="mt-2 font-serif text-2xl">Tulis ulasan kamu</h3>
+
+            <label class="field-label mt-6">Nama
+              <input name="reviewName" type="text" minlength="2" maxlength="50" required placeholder="Nama kamu" autocomplete="name" />
+            </label>
+
+            <label class="field-label mt-4">Produk yang diulas
+              <select name="reviewProduct" id="review-product" required>
+                <option value="">Pilih varian RAU Lab</option>
+              </select>
+            </label>
+
+            <fieldset class="mt-4">
+              <legend class="field-label">Rating kamu</legend>
+              <div class="rating-picker mt-2" role="radiogroup" aria-label="Pilih rating">
+                <input type="radio" name="reviewRating" id="rating-5" value="5" required /><label for="rating-5" title="5 bintang">★</label>
+                <input type="radio" name="reviewRating" id="rating-4" value="4" /><label for="rating-4" title="4 bintang">★</label>
+                <input type="radio" name="reviewRating" id="rating-3" value="3" /><label for="rating-3" title="3 bintang">★</label>
+                <input type="radio" name="reviewRating" id="rating-2" value="2" /><label for="rating-2" title="2 bintang">★</label>
+                <input type="radio" name="reviewRating" id="rating-1" value="1" /><label for="rating-1" title="1 bintang">★</label>
+              </div>
+            </fieldset>
+
+            <label class="field-label mt-4">Ceritakan pengalamanmu
+              <textarea name="reviewComment" rows="4" minlength="5" maxlength="600" required placeholder="Apa yang kamu suka dari produk ini?"></textarea>
+            </label>
+
+            <button id="review-submit" type="submit" class="button-dark mt-6 w-full justify-center">Publikasikan ulasan <span>↗</span></button>
+            <p id="review-form-message" class="mt-3 text-xs leading-5 text-rau-muted" role="status">Ulasan akan langsung dipublikasikan setelah dikirim. Jangan sertakan informasi pribadi.</p>
+          </form>
+
+          <div class="review-results">
+            <div class="flex flex-wrap items-end justify-between gap-4 border-b border-rau-line pb-5">
+              <div>
+                <p class="eyebrow">CUSTOMER VOICES</p>
+                <div class="mt-2 flex items-baseline gap-2">
+                  <strong id="review-average" class="font-serif text-4xl">—</strong>
+                  <span class="text-sm text-rau-muted">/ 5</span>
+                </div>
+                <div id="review-average-stars" class="mt-1 tracking-[.2em] text-rau-rose">☆☆☆☆☆</div>
+                <p id="review-count" class="mt-1 text-xs text-rau-muted">Belum ada ulasan</p>
+              </div>
+              <label class="field-label min-w-40">Filter produk
+                <select id="review-filter">
+                  <option value="">Semua produk</option>
+                </select>
+              </label>
+            </div>
+            <div id="review-list" class="mt-5 grid gap-4" aria-live="polite">
+              <p class="text-sm text-rau-muted">Ulasan yang sudah dipublikasikan akan tampil di sini.</p>
+            </div>
+            <p class="mt-5 text-[10px] leading-5 text-rau-muted">Ulasan dibagikan secara publik. Pastikan ulasan sesuai pengalamanmu dan tidak memuat data pribadi.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Brand promise -->
+    <section class="brand-promise-section">
+      <div class="mx-auto max-w-7xl px-5 py-16 lg:px-8">
+        <div class="mx-auto max-w-2xl text-center">
+          <p class="eyebrow">THE RAU LAB PROMISE</p>
+          <h2 class="section-title mt-3">Small ritual, <em>lovely feeling.</em></h2>
+          <p class="mt-5 text-sm leading-8 text-rau-muted">Kami ingin setiap detail terasa sederhana dan menyenangkan—mulai dari memilih varian, membuka paket, hingga menjadikannya bagian dari rutinitasmu.</p>
+        </div>
+        <div class="promise-grid mt-10">
+          <article><span>01</span><h3>Choose your mood</h3><p>Temukan varian yang paling dekat dengan gaya dan suasana hatimu.</p></article>
+          <article><span>02</span><h3>Make it a ritual</h3><p>Jadikan momen merawat diri sebagai jeda kecil di tengah kesibukan.</p></article>
+          <article><span>03</span><h3>Share the glow</h3><p>Ceritakan pengalamanmu dan bantu komunitas RAU Lab bertumbuh.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section id="faq" class="faq-section">
+      <div class="mx-auto max-w-4xl px-5 py-16 lg:px-8">
+        <div class="text-center"><p class="eyebrow">GOOD TO KNOW</p><h2 class="section-title mt-3">A few <em>questions.</em></h2></div>
+        <div class="faq-list mt-9">
+          <details><summary>Bagaimana cara memesan produk RAU Lab?</summary><p>Pilih varian dan jumlah produk, masukkan ke keranjang, lalu isi data penerima. Ringkasan pesanan akan terbuka di WhatsApp admin untuk konfirmasi.</p></details>
+          <details><summary>Apakah harga sudah termasuk ongkos kirim?</summary><p>Harga yang tertera adalah harga produk. Ongkos kirim akan dikonfirmasi admin berdasarkan alamat tujuan dan layanan kurir.</p></details>
+          <details><summary>Bagaimana cara mengirim ulasan?</summary><p>Isi formulir ulasan di bagian Ulasan. WhatsApp akan terbuka dengan detail ulasanmu. Tekan Kirim agar admin menerimanya.</p></details>
+          <details><summary>Bagaimana jika pesanan saya bermasalah?</summary><p>Hubungi admin melalui WhatsApp dan sertakan detail pesanan serta foto atau video kondisi paket saat diterima.</p></details>
+        </div>
       </div>
     </section>
 
@@ -219,6 +304,7 @@
   </section>
 
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="script.js"></script>
 </body>
 </html>

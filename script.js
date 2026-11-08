@@ -1,139 +1,254 @@
-// 9 VARIAN PRODUK DENGAN RANGE HARGA 35K - 43K
+/* RAU Lab — cart, catalog, checkout */
+"use strict";
+
+const WHATSAPP_NUMBER = "6281234567890";
+const STORAGE_KEY = "rauLabCart";
+
 const products = [
-    { id: 1, name: "RAU Lab Original Clear", desc: "Pelembap murni transparan tanpa warna.", price: 35000, img: "https://images.unsplash.com/photo-1586495777744-4413f21062fa?w=300" },
-    { id: 2, name: "RAU Lab Rose Pink", desc: "Rona pink alami segar merona.", price: 37000, img: "https://images.unsplash.com/photo-1512496015851-a90fb38ba796?w=300" },
-    { id: 3, name: "RAU Lab Peach Nude", desc: "Warna peach natural no-makeup look.", price: 38000, img: "https://images.unsplash.com/photo-1631729371254-42c2892f0e6e?w=300" },
-    { id: 4, name: "RAU Lab Cherry Red", desc: "Warna merah ceri bold & elegan.", price: 40000, img: "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=300" },
-    { id: 5, name: "RAU Lab Honey Glow", desc: "Ekstra madu untuk bibir sangat kering.", price: 39000, img: "https://images.unsplash.com/photo-1599733589046-10c005739ef9?w=300" },
-    { id: 6, name: "RAU Lab Berry Plump", desc: "Antioksidan berry untuk bibir kenyal.", price: 41000, img: "https://images.unsplash.com/photo-1571781926291-c477ebfd024b?w=300" },
-    { id: 7, name: "RAU Lab Coffee Scrub", desc: "Infused kopi untuk merawat bibir gelap.", price: 36000, img: "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=300" },
-    { id: 8, name: "RAU Lab Mint Fresh", desc: "Sensasi mint dingin menyegarkan.", price: 38000, img: "https://images.unsplash.com/photo-1556228720-195a672e8a03?w=300" },
-    { id: 9, name: "RAU Lab Golden Gleam", desc: "Micro-shimmer kilau elegan.", price: 43000, img: "https://images.unsplash.com/photo-1535585209827-a15fcdbc4c2d?w=300" }
+  { id:"original-clear", name:"RAU Lab Original Clear", price:35000, description:"Kilau bening untuk tampilan bibir natural.", tag:"EVERYDAY", image:"https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?auto=format&fit=crop&w=700&q=80" },
+  { id:"coffee-scrub", name:"RAU Lab Coffee Scrub", price:36000, description:"Nuansa hangat yang effortless.", tag:"WARM TONE", image:"https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=700&q=80" },
+  { id:"rose-pink", name:"RAU Lab Rose Pink", price:37000, description:"Sentuhan pink lembut yang manis.", tag:"SOFT PINK", image:"https://images.unsplash.com/photo-1586495777744-4413f21062fa?auto=format&fit=crop&w=700&q=80" },
+  { id:"peach-nude", name:"RAU Lab Peach Nude", price:38000, description:"Warna peach nude untuk kesan fresh.", tag:"NUDE GLOW", image:"https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=700&q=80" },
+  { id:"mint-fresh", name:"RAU Lab Mint Fresh", price:38000, description:"Pilihan clean untuk ritual harian.", tag:"FRESH FEEL", image:"https://images.unsplash.com/photo-1601049541289-9b1b7bbbfe19?auto=format&fit=crop&w=700&q=80" },
+  { id:"honey-glow", name:"RAU Lab Honey Glow", price:39000, description:"Kilau hangat dengan karakter lembut.", tag:"GOLDEN HOUR", image:"https://images.unsplash.com/photo-1599733589046-833d8d2b9d9c?auto=format&fit=crop&w=700&q=80" },
+  { id:"cherry-red", name:"RAU Lab Cherry Red", price:40000, description:"Merah cerah untuk tampilan lebih berani.", tag:"BOLD MOOD", image:"https://images.unsplash.com/photo-1512496015851-a90fb38ba796?auto=format&fit=crop&w=700&q=80" },
+  { id:"berry-plump", name:"RAU Lab Berry Plump", price:41000, description:"Berry tone yang playful dan modern.", tag:"BERRY TONE", image:"https://images.unsplash.com/photo-1591360236480-4ed861025fa1?auto=format&fit=crop&w=700&q=80" },
+  { id:"golden-gleam", name:"RAU Lab Golden Gleam", price:43000, description:"Sentuhan glow untuk momen spesial.", tag:"LIMITED FEEL", image:"https://images.unsplash.com/photo-1607602132700-068258a7b2c2?auto=format&fit=crop&w=700&q=80" }
 ];
 
-let cart = [];
-let orders = [];
+const rupiah = amount => new Intl.NumberFormat("id-ID", {
+  style:"currency", currency:"IDR", maximumFractionDigits:0
+}).format(amount);
 
-// FUNGSI PINDAH TAB / HALAMAN
-function switchTab(tabId) {
-    document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active-pane'));
-    document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+const $ = selector => document.querySelector(selector);
+const productGrid = $("#product-grid");
+const cartDrawer = $("#cart-drawer");
+const cartOverlay = $("#cart-overlay");
+const cartItemsEl = $("#cart-items");
+const toast = $("#toast");
 
-    document.getElementById('tab-' + tabId).classList.add('active-pane');
-    const navEl = document.getElementById('nav-' + tabId);
-    if (navEl) navEl.classList.add('active');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+let cart = loadCart();
+
+function loadCart() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+    if (!Array.isArray(saved)) return [];
+    return saved.filter(item => products.some(p => p.id === item.id) && Number.isInteger(item.qty) && item.qty > 0);
+  } catch {
+    return [];
+  }
 }
 
-// RENDER PRODUK KE HALAMAN
+function saveCart() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(cart));
+}
+
+function getProduct(id) {
+  return products.find(product => product.id === id);
+}
+
+function cartQuantity() {
+  return cart.reduce((sum, item) => sum + item.qty, 0);
+}
+
+function cartTotal() {
+  return cart.reduce((sum, item) => sum + getProduct(item.id).price * item.qty, 0);
+}
+
+function showToast(message) {
+  toast.textContent = message;
+  toast.classList.add("show");
+  window.clearTimeout(showToast.timeout);
+  showToast.timeout = window.setTimeout(() => toast.classList.remove("show"), 2200);
+}
+
 function renderProducts() {
-    // Katalog Lengkap
-    const list = document.getElementById('product-list');
-    list.innerHTML = products.map(p => `
-        <div class="product-card">
-            <img src="${p.img}" alt="${p.name}">
-            <h4>${p.name}</h4>
-            <p>${p.desc}</p>
-            <div class="price">Rp ${p.price.toLocaleString()}</div>
-            <button class="btn-add" onclick="addToCart(${p.id})">+ Masuk Keranjang</button>
+  productGrid.innerHTML = products.map((product, index) => `
+    <article class="product-card">
+      <div class="product-image-wrap">
+        <img class="product-image" src="${product.image}" alt="${product.name}" loading="lazy"
+          onerror="this.src='https://placehold.co/700x875/f0eae4/77736c?text=RAU+Lab';" />
+        <span class="product-tag">${product.tag}</span>
+      </div>
+      <div class="mt-4 flex items-start justify-between gap-2">
+        <div>
+          <h3 class="product-name">${product.name}</h3>
+          <p class="product-description">${product.description}</p>
         </div>
-    `).join('');
-
-    // Produk Unggulan di Beranda (ambil 4 pertama)
-    const featuredList = document.getElementById('featured-list');
-    featuredList.innerHTML = products.slice(0, 4).map(p => `
-        <div class="product-card">
-            <img src="${p.img}" alt="${p.name}">
-            <h4>${p.name}</h4>
-            <p>${p.desc}</p>
-            <div class="price">Rp ${p.price.toLocaleString()}</div>
-            <button class="btn-add" onclick="addToCart(${p.id})">+ Masuk Keranjang</button>
-        </div>
-    `).join('');
+        <button class="add-button shrink-0" data-add="${product.id}" aria-label="Tambah ${product.name} ke keranjang">+</button>
+      </div>
+      <p class="product-price mt-3">${rupiah(product.price)}</p>
+    </article>
+  `).join("");
 }
 
-// KERANJANG BELANJA
 function addToCart(id) {
-    const product = products.find(p => p.id === id);
-    const item = cart.find(i => i.id === id);
-    if (item) {
-        item.qty++;
-    } else {
-        cart.push({ ...product, qty: 1 });
-    }
-    updateCart();
-    alert(product.name + " berhasil ditambahkan ke keranjang!");
+  const existing = cart.find(item => item.id === id);
+  if (existing) existing.qty += 1;
+  else cart.push({ id, qty:1 });
+  saveCart();
+  renderCart();
+  showToast("Produk ditambahkan ke keranjang");
 }
 
-function updateCart() {
-    document.getElementById('cart-count').innerText = cart.reduce((sum, i) => sum + i.qty, 0);
-    const itemsContainer = document.getElementById('cart-items');
-    if (cart.length === 0) {
-        itemsContainer.innerHTML = "<p>Keranjang masih kosong.</p>";
-        document.getElementById('total-price').innerText = "0";
-        return;
-    }
-    let total = 0;
-    itemsContainer.innerHTML = cart.map(i => {
-        total += i.price * i.qty;
-        return `<div class="cart-item"><span>${i.name} (x${i.qty})</span><span>Rp ${(i.price * i.qty).toLocaleString()}</span></div>`;
-    }).join('');
-    document.getElementById('total-price').innerText = total.toLocaleString();
+function changeQuantity(id, amount) {
+  const item = cart.find(entry => entry.id === id);
+  if (!item) return;
+  item.qty += amount;
+  if (item.qty <= 0) cart = cart.filter(entry => entry.id !== id);
+  saveCart();
+  renderCart();
 }
 
-function toggleCart() {
-    const modal = document.getElementById('cart-modal');
-    modal.style.display = modal.style.display === 'block' ? 'none' : 'block';
+function removeFromCart(id) {
+  cart = cart.filter(item => item.id !== id);
+  saveCart();
+  renderCart();
+  showToast("Produk dihapus dari keranjang");
 }
 
-function openAccountModal() {
-    const modal = document.getElementById('account-modal');
-    modal.style.display = modal.style.display === 'block' ? 'none' : 'block';
-}
+function renderCart() {
+  $("#cart-count").textContent = cartQuantity();
+  $("#cart-total").textContent = rupiah(cartTotal());
+  $("#checkout-total").textContent = rupiah(cartTotal());
 
-// CHECKOUT WHATSAPP & SIMPAN KE PESANAN SAYA
-function checkoutWA() {
-    if (cart.length === 0) {
-        alert("Keranjang kamu masih kosong!");
-        return;
-    }
-    let text = "Halo Admin RAU Lab, saya ingin memesan produk berikut:\n\n";
-    cart.forEach(i => {
-        text += `- ${i.name} (x${i.qty}) = Rp ${(i.price * i.qty).toLocaleString()}\n`;
-    });
-    let total = cart.reduce((sum, i) => sum + (i.price * i.qty), 0);
-    text += `\nTotal Belanja: Rp ${total.toLocaleString()}\nMohon informasi pembayaran & pengiriman. Terima kasih!`;
-    
-    // Simpan ke riwayat pesanan
-    orders.push({
-        date: new Date().toLocaleDateString('id-ID'),
-        items: [...cart],
-        total: total,
-        status: "Menunggu Konfirmasi Pembayaran"
-    });
-    renderOrders();
+  if (cart.length === 0) {
+    cartItemsEl.innerHTML = '<div class="cart-empty">Your bag is waiting.</div>';
+    return;
+  }
 
-    let phone = "6281234567890";
-    window.open(`https://api.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(text)}`, '_blank');
-    
-    cart = [];
-    updateCart();
-    toggleCart();
-}
-
-function renderOrders() {
-    const container = document.getElementById('order-history-list');
-    if (orders.length === 0) {
-        container.innerHTML = "<p>Belum ada riwayat pesanan aktif. Yuk mulai belanja sekarang!</p>";
-        return;
-    }
-    container.innerHTML = orders.map((o, idx) => `
-        <div style="background:#fdfaf7; border:1px solid #eee; padding:15px; border-radius:8px; margin-bottom:10px;">
-            <p><strong>Pesanan #${idx + 1}</strong> - <span style="color:#d63031;">${o.status}</span></p>
-            <p style="font-size:12px; color:#777;">Tanggal: ${o.date}</p>
-            <p style="font-size:13px; margin-top:5px;">Total: <strong>Rp ${o.total.toLocaleString()}</strong></p>
+  cartItemsEl.innerHTML = cart.map(item => {
+    const product = getProduct(item.id);
+    return `
+      <div class="cart-line">
+        <img src="${product.image}" alt="${product.name}" />
+        <div>
+          <h3 class="cart-line-title">${product.name}</h3>
+          <p class="mt-1 text-xs">${rupiah(product.price)}</p>
+          <div class="qty-control">
+            <button type="button" data-qty="-1" data-id="${item.id}" aria-label="Kurangi jumlah">−</button>
+            <span>${item.qty}</span>
+            <button type="button" data-qty="1" data-id="${item.id}" aria-label="Tambah jumlah">+</button>
+            <button type="button" class="remove-button ml-2" data-remove="${item.id}">Hapus</button>
+          </div>
         </div>
-    `).join('');
+        <strong class="text-xs">${rupiah(product.price * item.qty)}</strong>
+      </div>
+    `;
+  }).join("");
 }
 
+function openCart() {
+  cartOverlay.classList.remove("hidden");
+  requestAnimationFrame(() => cartOverlay.classList.add("visible"));
+  cartDrawer.classList.add("open");
+  cartDrawer.setAttribute("aria-hidden", "false");
+  cartOverlay.setAttribute("aria-hidden", "false");
+  document.body.classList.add("overflow-hidden");
+}
+
+function closeCart() {
+  cartDrawer.classList.remove("open");
+  cartOverlay.classList.remove("visible");
+  cartDrawer.setAttribute("aria-hidden", "true");
+  cartOverlay.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("overflow-hidden");
+  window.setTimeout(() => cartOverlay.classList.add("hidden"), 250);
+}
+
+function openCheckout() {
+  if (cart.length === 0) {
+    showToast("Keranjang masih kosong");
+    return;
+  }
+  closeCart();
+  $("#checkout").classList.remove("hidden");
+  document.body.classList.add("overflow-hidden");
+  window.scrollTo({ top:0, behavior:"smooth" });
+}
+
+function closeCheckout() {
+  $("#checkout").classList.add("hidden");
+  document.body.classList.remove("overflow-hidden");
+}
+
+function buildWhatsAppMessage(formData) {
+  const lines = cart.map((item, index) => {
+    const product = getProduct(item.id);
+    return `${index + 1}. ${product.name}\n   ${item.qty} x ${rupiah(product.price)} = ${rupiah(product.price * item.qty)}`;
+  });
+
+  return [
+    "Halo RAU Lab! Saya ingin memesan:",
+    "",
+    ...lines,
+    "",
+    `*TOTAL: ${rupiah(cartTotal())}*`,
+    "",
+    "*DETAIL PENERIMA*",
+    `Nama: ${formData.name}`,
+    `No. WhatsApp: ${formData.phone}`,
+    `Alamat: ${formData.address}`,
+    `Catatan: ${formData.note || "-"}`,
+    "",
+    "Mohon konfirmasi ketersediaan produk dan ongkos kirim. Terima kasih!"
+  ].join("\n");
+}
+
+// Event delegation for product and cart controls.
+productGrid.addEventListener("click", event => {
+  const button = event.target.closest("[data-add]");
+  if (button) addToCart(button.dataset.add);
+});
+
+cartItemsEl.addEventListener("click", event => {
+  const quantityButton = event.target.closest("[data-qty]");
+  const removeButton = event.target.closest("[data-remove]");
+  if (quantityButton) changeQuantity(quantityButton.dataset.id, Number(quantityButton.dataset.qty));
+  if (removeButton) removeFromCart(removeButton.dataset.remove);
+});
+
+$("#cart-open").addEventListener("click", openCart);
+$("#cart-close").addEventListener("click", closeCart);
+cartOverlay.addEventListener("click", closeCart);
+$("#checkout-scroll").addEventListener("click", openCheckout);
+$("#checkout-close").addEventListener("click", closeCheckout);
+
+$("#checkout-form").addEventListener("submit", event => {
+  event.preventDefault();
+  if (cart.length === 0) {
+    showToast("Keranjang masih kosong");
+    closeCheckout();
+    return;
+  }
+
+  const formData = Object.fromEntries(new FormData(event.currentTarget).entries());
+  const message = buildWhatsAppMessage(formData);
+  const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+  window.open(whatsappUrl, "_blank", "noopener,noreferrer");
+});
+
+$("#mobile-menu-button").addEventListener("click", () => {
+  const nav = $("#mobile-nav");
+  const isExpanded = $("#mobile-menu-button").getAttribute("aria-expanded") === "true";
+  nav.classList.toggle("hidden", isExpanded);
+  $("#mobile-menu-button").setAttribute("aria-expanded", String(!isExpanded));
+});
+
+$("#mobile-nav").addEventListener("click", event => {
+  if (event.target.closest("a")) {
+    $("#mobile-nav").classList.add("hidden");
+    $("#mobile-menu-button").setAttribute("aria-expanded", "false");
+  }
+});
+
+document.addEventListener("keydown", event => {
+  if (event.key === "Escape") {
+    closeCart();
+    closeCheckout();
+  }
+});
+
+$("#year").textContent = new Date().getFullYear();
 renderProducts();
+renderCart();

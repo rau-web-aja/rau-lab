@@ -1,126 +1,224 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RAU Lab - Official E-Commerce Store</title>
-    <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#f8f6f2" />
+  <meta name="description" content="RAU Lab Lip Serum — perawatan bibir dengan sentuhan warna dan kilau." />
+  <title>RAU Lab — Lip Serum, Made for You</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            rau: {
+              ink: "#25231f",
+              muted: "#77736c",
+              paper: "#f8f6f2",
+              blush: "#ead8d1",
+              rose: "#a96f69",
+              line: "#e8e3dc"
+            }
+          },
+          fontFamily: {
+            sans: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],
+            serif: ["Georgia", "serif"]
+          }
+        }
+      }
+    };
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
 </head>
-<body>
+<body class="bg-rau-paper text-rau-ink antialiased">
+  <!-- Announcement bar -->
+  <div class="bg-rau-ink px-4 py-2 text-center text-[10px] tracking-[.22em] text-white sm:text-xs">
+    A LITTLE LOVE FOR YOUR LIPS · FREE SHIPPING FOR SELECTED PROMOS
+  </div>
 
-    <!-- TOP BAR / PENGUMUMAN -->
-    <div class="top-bar">
-        <p>✨ Promo Spesial: Gratis Ongkir Seluruh Indonesia untuk Pembelian Min. 2 Produk! ✨</p>
+  <!-- Header -->
+  <header class="sticky top-0 z-40 border-b border-rau-line/80 bg-rau-paper/95 backdrop-blur">
+    <div class="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 lg:px-8">
+      <a href="#beranda" class="brand-mark" aria-label="RAU Lab beranda">RAU<span>LAB</span></a>
+
+      <nav id="desktop-nav" class="hidden items-center gap-6 lg:flex" aria-label="Navigasi utama">
+        <a href="#beranda">Beranda</a>
+        <a href="#katalog">Katalog Produk</a>
+        <a href="#tentang">Tentang Kami</a>
+        <a href="#pengiriman">Pengiriman</a>
+        <a href="#retur">Retur & Refund</a>
+        <a href="#ulasan">Ulasan</a>
+        <a href="#kontak">Kontak</a>
+        <a href="#pesanan">Pesanan Saya</a>
+      </nav>
+
+      <div class="flex items-center gap-3">
+        <button id="cart-open" class="cart-trigger" aria-label="Buka keranjang">
+          <span class="hidden sm:inline">Bag</span>
+          <span aria-hidden="true">＋</span>
+          <span id="cart-count" class="cart-count">0</span>
+        </button>
+        <button id="mobile-menu-button" class="rounded-full border border-rau-line p-2 lg:hidden" aria-label="Buka menu" aria-expanded="false">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        </button>
+      </div>
     </div>
+    <nav id="mobile-nav" class="mobile-nav hidden border-t border-rau-line px-5 py-4 lg:hidden" aria-label="Navigasi mobile">
+      <a href="#beranda">Beranda</a><a href="#katalog">Katalog Produk</a><a href="#tentang">Tentang Kami</a>
+      <a href="#pengiriman">Pengiriman</a><a href="#retur">Retur & Refund</a><a href="#ulasan">Ulasan</a>
+      <a href="#kontak">Kontak</a><a href="#pesanan">Pesanan Saya</a>
+    </nav>
+  </header>
 
-    <!-- NAVBAR UTAMA -->
-    <header>
-        <div class="container nav-container">
-            <h1 class="logo" onclick="switchTab('home')">RAU <span>Lab</span></h1>
-            <nav class="nav-links">
-                <a href="#" onclick="switchTab('home')" class="nav-item active" id="nav-home">Beranda</a>
-                <a href="#" onclick="switchTab('products')" class="nav-item" id="nav-products">Produk</a>
-                <a href="#" onclick="switchTab('about')" class="nav-item" id="nav-about">Tentang Kami</a>
-                <a href="#" onclick="switchTab('shipping')" class="nav-item" id="nav-shipping">Pengiriman</a>
-                <a href="#" onclick="switchTab('returns')" class="nav-item" id="nav-returns">Retur & Refund</a>
-                <a href="#" onclick="switchTab('reviews')" class="nav-item" id="nav-reviews">Ulasan</a>
-                <a href="#" onclick="switchTab('contact')" class="nav-item" id="nav-contact">Kontak</a>
-                <a href="#" onclick="switchTab('orders')" class="nav-item" id="nav-orders">Pesanan Saya</a>
-            </nav>
-            <div class="nav-actions">
-                <div class="account-btn" onclick="openAccountModal()">👤 Akun</div>
-                <div class="cart-icon" onclick="toggleCart()">🛒 Keranjang (<span id="cart-count">0</span>)</div>
-            </div>
+  <main>
+    <!-- Hero -->
+    <section id="beranda" class="hero-section">
+      <div class="mx-auto grid max-w-7xl items-center gap-10 px-5 py-14 md:grid-cols-2 md:py-24 lg:px-8">
+        <div class="order-2 max-w-xl md:order-1">
+          <p class="eyebrow">YOUR DAILY LIP RITUAL</p>
+          <h1 class="hero-title mt-5">A softer touch.<br /><em>A brighter you.</em></h1>
+          <p class="mt-6 max-w-md text-sm leading-7 text-rau-muted sm:text-base">
+            Temukan kenyamanan dan kilau dalam satu sentuhan. Lip serum untuk menemani ritual kecil yang membuatmu merasa istimewa.
+          </p>
+          <div class="mt-8 flex flex-wrap items-center gap-5">
+            <a href="#katalog" class="button-dark">Jelajahi koleksi <span>↗</span></a>
+            <a href="#tentang" class="text-xs tracking-[.12em] underline underline-offset-4">CERITA RAU LAB</a>
+          </div>
+          <p class="mt-12 text-[10px] tracking-[.2em] text-rau-muted">THOUGHTFULLY MADE · EVERYDAY ESSENTIALS</p>
         </div>
-    </header>
+        <div class="hero-image-wrap order-1 md:order-2">
+          <img src="https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?auto=format&fit=crop&w=1100&q=85" alt="Produk kecantikan dengan tampilan minimalis" class="hero-image" />
+          <div class="hero-image-note"><span>01 / 09</span><span>THE LIP SERUM EDIT</span></div>
+        </div>
+      </div>
+    </section>
 
-    <!-- KONTEN UTAMA BERDASARKAN TAB -->
-    <main class="main-content">
+    <!-- Value strip -->
+    <section class="border-y border-rau-line bg-white/60">
+      <div class="mx-auto grid max-w-7xl grid-cols-1 gap-4 px-5 py-6 text-center sm:grid-cols-3 lg:px-8">
+        <p class="micro-value">01 <span>Everyday comfort</span></p>
+        <p class="micro-value">02 <span>Effortless glow</span></p>
+        <p class="micro-value">03 <span>Your kind of color</span></p>
+      </div>
+    </section>
 
-        <!-- 1. BERANDA -->
-        <section id="tab-home" class="tab-pane active-pane">
-            <div class="hero">
-                <div class="container hero-content">
-                    <h2>RAU Lab Lip Serum Collection</h2>
-                    <p>Perawatan bibir harian berformula ringan, menutrisi intensif, dengan varian lengkap harga terjangkau (Rp35k - Rp43k).</p>
-                    <button class="btn-primary" onclick="switchTab('products')">Belanja Koleksi Sekarang</button>
-                </div>
-            </div>
+    <!-- Catalog -->
+    <section id="katalog" class="section-pad mx-auto max-w-7xl px-5 lg:px-8">
+      <div class="section-heading">
+        <div><p class="eyebrow">THE COLLECTION</p><h2 class="section-title">Find your <em>lip mood.</em></h2></div>
+        <p class="max-w-sm text-sm leading-7 text-rau-muted">Sembilan pilihan warna dan karakter untuk menemani setiap versi dirimu.</p>
+      </div>
+      <div id="product-grid" class="mt-10 grid grid-cols-2 gap-x-4 gap-y-9 sm:grid-cols-2 md:grid-cols-3 lg:gap-x-7"></div>
+    </section>
 
-            <div class="container featured-section">
-                <h3 class="section-title">Varian Unggulan Pilihan</h3>
-                <div class="product-grid" id="featured-list"></div>
-            </div>
-        </section>
+    <!-- About -->
+    <section id="tentang" class="bg-[#eee8e1]">
+      <div class="mx-auto grid max-w-7xl items-center gap-10 px-5 py-16 md:grid-cols-2 md:py-24 lg:px-8">
+        <div class="about-image-wrap">
+          <img src="https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=1000&q=85" alt="Ritual perawatan kecantikan" />
+        </div>
+        <div class="max-w-lg md:pl-8">
+          <p class="eyebrow">A NOTE FROM RAU</p>
+          <h2 class="section-title mt-4">Beauty in the<br /><em>little rituals.</em></h2>
+          <p class="mt-6 text-sm leading-8 text-rau-muted">RAU Lab percaya bahwa merawat diri tidak harus rumit. Kami menghadirkan lip serum sebagai teman sederhana untuk rutinitas harian—praktis, menyenangkan, dan dekat dengan keseharianmu.</p>
+          <p class="mt-4 text-sm leading-8 text-rau-muted">Pilih tekstur dan warna yang terasa paling kamu. Karena ritual terbaik adalah ritual yang membuatmu nyaman menjadi diri sendiri.</p>
+        </div>
+      </div>
+    </section>
 
-        <!-- 2. PRODUK (KATALOG 9 VARIAN DENGAN RANGE HARGA 35K - 43K) -->
-        <section id="tab-products" class="tab-pane">
-            <div class="container">
-                <h3 class="section-title">Katalog Lengkap (9 Varian Lip Serum)</h3>
-                <p class="section-subtitle">Temukan varian favoritmu dengan harga terbaik mulai dari Rp35.000 hingga Rp43.000.</p>
-                <div class="product-grid" id="product-list"></div>
-            </div>
-        </section>
+    <!-- Shipping / policies -->
+    <section class="mx-auto grid max-w-7xl gap-5 px-5 py-16 md:grid-cols-2 lg:px-8">
+      <article id="pengiriman" class="info-panel">
+        <p class="eyebrow">DELIVERY NOTES</p><h2 class="panel-title">Pengiriman</h2>
+        <p>Pesanan diproses setelah detail dan pembayaran dikonfirmasi melalui WhatsApp. Estimasi pengiriman mengikuti layanan kurir dan lokasi tujuan.</p>
+        <p class="mt-3">Pastikan nama penerima, nomor WhatsApp, dan alamat ditulis lengkap agar paket sampai dengan lancar.</p>
+      </article>
+      <article id="retur" class="info-panel">
+        <p class="eyebrow">HERE TO HELP</p><h2 class="panel-title">Retur & Refund</h2>
+        <p>Jika produk diterima dalam kondisi rusak atau tidak sesuai, hubungi tim RAU Lab maksimal 2 × 24 jam setelah paket diterima.</p>
+        <p class="mt-3">Sertakan nomor pesanan serta foto/video unboxing. Pengajuan akan ditinjau oleh tim kami sesuai kondisi produk dan kebijakan yang berlaku.</p>
+      </article>
+    </section>
 
-        <!-- 3. TENTANG KAMI -->
-        <section id="tab-about" class="tab-pane">
-            <div class="container static-page">
-                <h3>Tentang RAU Lab</h3>
-                <p>RAU Lab adalah brand kecantikan lokal D2C (Direct-to-Consumer) yang diformulasikan khusus untuk pelajar, mahasiswa, dan anak muda Indonesia.</p>
-                <p>Kami percaya bahwa perawatan bibir berkualitas tinggi tidak harus mahal. Dengan riset formula yang aman, halal, dan bahan-bahan pilihan, ke-9 varian lip serum kami siap menjaga kelembapan bibirmu seharian penuh tanpa rasa lengket.</p>
-            </div>
-        </section>
+    <!-- Reviews -->
+    <section id="ulasan" class="bg-white">
+      <div class="mx-auto max-w-7xl px-5 py-16 text-center md:py-20 lg:px-8">
+        <p class="eyebrow">KIND WORDS</p><h2 class="section-title mt-3">A little <em>love note.</em></h2>
+        <div class="mx-auto mt-9 grid max-w-4xl gap-5 md:grid-cols-3">
+          <blockquote class="review-card"><div class="tracking-[.2em] text-rau-rose">★★★★★</div><p>“Ringan dipakai sehari-hari dan bikin bibir terlihat fresh.”</p><cite>— NAYA</cite></blockquote>
+          <blockquote class="review-card"><div class="tracking-[.2em] text-rau-rose">★★★★★</div><p>“Suka pilihan warnanya. Packaging-nya juga simple dan cantik.”</p><cite>— ALYA</cite></blockquote>
+          <blockquote class="review-card"><div class="tracking-[.2em] text-rau-rose">★★★★★</div><p>“Jadi salah satu item yang selalu ada di pouch aku.”</p><cite>— DITA</cite></blockquote>
+        </div>
+        <p class="mt-5 text-[10px] text-rau-muted">Contoh tampilan ulasan — ganti dengan testimoni pelanggan asli setelah toko aktif.</p>
+      </div>
+    </section>
 
-        <!-- 4. PENGIRIMAN -->
-        <section id="tab-shipping" class="tab-pane">
-            <div class="container static-page">
-                <h3>Informasi Pengiriman</h3>
-                <ul>
-                    <li><strong>Kurir Partner:</strong> JNE, J&T Express, SiCepat, dan AnterAja.</li>
-                    <li><strong>Estimasi Waktu:</strong> Reguler (2-4 hari kerja), Instant/SameDay (khusus wilayah tertentu).</li>
-                    <li><strong>Biaya Kirim:</strong> Dihitung otomatis saat checkout atau klaim promo gratis ongkir dengan minimum pembelian.</li>
-                    <li><strong>Resi Pengiriman:</strong> Nomor resi akan diperbarui otomatis ke menu "Pesanan Saya" maksimal 1x24 jam setelah pembayaran dikonfirmasi.</li>
-                </ul>
-            </div>
-        </section>
+    <!-- Contact -->
+    <section id="kontak" class="bg-rau-ink text-white">
+      <div class="mx-auto flex max-w-7xl flex-col justify-between gap-8 px-5 py-14 md:flex-row md:items-center lg:px-8">
+        <div><p class="eyebrow !text-[#c9aaa2]">LET'S TALK</p><h2 class="mt-3 font-serif text-4xl">We’re one message away.</h2><p class="mt-3 text-sm text-white/60">Ada pertanyaan? Tim RAU Lab siap membantu.</p></div>
+        <a class="button-light" href="https://wa.me/6281234567890" target="_blank" rel="noopener">Chat via WhatsApp ↗</a>
+      </div>
+    </section>
 
-        <!-- 5. RETUR & REFUND -->
-        <section id="tab-returns" class="tab-pane">
-            <div class="container static-page">
-                <h3>Kebijakan Retur & Refund</h3>
-                <p>Kepuasan pelanggan adalah prioritas kami. Jika produk yang kamu terima rusak, cacat produksi, atau salah varian, ikuti ketentuan berikut:</p>
-                <ul>
-                    <li>Wajib menyertakan video unboxing tanpa terputus sejak paket diterima dan dibuka.</li>
-                    <li>Pengajuan retur maksimal 2 hari setelah paket sampai di tujuan.</li>
-                    <li>Produk pengganti akan dikirimkan ulang atau dana dikembalikan (refund) penuh setelah verifikasi admin via WhatsApp selesai.</li>
-                </ul>
-            </div>
-        </section>
+    <!-- My orders -->
+    <section id="pesanan" class="mx-auto max-w-7xl px-5 py-16 lg:px-8">
+      <div class="mx-auto max-w-2xl text-center">
+        <p class="eyebrow">ORDER ASSISTANCE</p><h2 class="section-title mt-3">Pesanan <em>saya.</em></h2>
+        <p class="mt-4 text-sm leading-7 text-rau-muted">Untuk melihat status pesanan, silakan hubungi admin melalui WhatsApp dengan menyertakan nama dan nomor pesanan yang telah diberikan.</p>
+        <a class="button-dark mt-7 inline-flex" href="https://wa.me/6281234567890?text=Halo%20RAU%20Lab%2C%20saya%20ingin%20menanyakan%20status%20pesanan." target="_blank" rel="noopener">Tanyakan pesanan ↗</a>
+      </div>
+    </section>
+  </main>
 
-        <!-- 6. ULASAN -->
-        <section id="tab-reviews" class="tab-pane">
-            <div class="container static-page">
-                <h3>Ulasan Pelanggan Setia</h3>
-                <div class="review-grid">
-                    <div class="review-card">
-                        <p class="stars">⭐⭐⭐⭐⭐</p>
-                        <p class="review-text">"Sumpah inisial varian Honey Glow bener-bener bikin bibir lembap semalaman! Gak pecah-pecah lagi pas bangun tidur."</p>
-                        <span class="review-author">- Sarah, Mahasiswa Salatiga</span>
-                    </div>
-                    <div class="review-card">
-                        <p class="stars">⭐⭐⭐⭐⭐</p>
-                        <p class="review-text">"Warnanya natural banget di bibir, gak kelihatan menor tapi tetep fresh buat kuliah."</p>
-                        <span class="review-author">- Dinda A., Semarang</span>
-                    </div>
-                    <div class="review-card">
-                        <p class="stars">⭐⭐⭐⭐⭐</p>
-                        <p class="review-text">"Pengirimannya cepat banget dan adminnya ramah parah. Bakal langganan terus sih!"</p>
-                        <span class="review-author">- Fajar R., Bandung</span>
-                    </div>
-                </div>
-            </div>
-        </section>
+  <footer class="border-t border-rau-line bg-white">
+    <div class="mx-auto flex max-w-7xl flex-col gap-4 px-5 py-8 sm:flex-row sm:items-center sm:justify-between lg:px-8">
+      <a href="#beranda" class="brand-mark">RAU<span>LAB</span></a>
+      <p class="text-[10px] tracking-[.12em] text-rau-muted">© <span id="year"></span> RAU LAB. MADE WITH CARE.</p>
+      <a href="#kontak" class="text-xs underline underline-offset-4">CONTACT US</a>
+    </div>
+  </footer>
 
-        <!-- 7. KONTAK -->
-        <section id="tab-contact"
+  <!-- Cart drawer -->
+  <div id="cart-overlay" class="cart-overlay hidden" aria-hidden="true"></div>
+  <aside id="cart-drawer" class="cart-drawer" aria-label="Keranjang belanja" aria-hidden="true">
+    <div class="flex items-center justify-between border-b border-rau-line px-5 py-5">
+      <div><p class="eyebrow">YOUR SELECTION</p><h2 class="font-serif text-2xl">Shopping bag</h2></div>
+      <button id="cart-close" class="close-button" aria-label="Tutup keranjang">×</button>
+    </div>
+    <div id="cart-items" class="cart-items"></div>
+    <div class="border-t border-rau-line px-5 py-5">
+      <div class="flex items-center justify-between text-sm"><span>Subtotal</span><strong id="cart-total" class="text-base">Rp0</strong></div>
+      <p class="mt-2 text-[11px] leading-5 text-rau-muted">Ongkos kirim dikonfirmasi oleh admin sesuai alamat tujuan.</p>
+      <button id="checkout-scroll" class="button-dark mt-5 w-full justify-center">Lanjut checkout <span>→</span></button>
+    </div>
+  </aside>
+
+  <!-- Checkout -->
+  <section id="checkout" class="checkout-section hidden">
+    <div class="mx-auto max-w-3xl px-5 py-12">
+      <div class="flex items-center justify-between"><div><p class="eyebrow">ALMOST YOURS</p><h2 class="section-title mt-2">Checkout.</h2></div><button id="checkout-close" class="close-button" aria-label="Tutup checkout">×</button></div>
+      <form id="checkout-form" class="mt-8 grid gap-5">
+        <div class="grid gap-5 sm:grid-cols-2">
+          <label class="field-label">Nama lengkap<input name="name" type="text" autocomplete="name" required placeholder="Nama penerima" /></label>
+          <label class="field-label">Nomor WhatsApp<input name="phone" type="tel" autocomplete="tel" required placeholder="08xxxxxxxxxx" /></label>
+        </div>
+        <label class="field-label">Alamat pengiriman<textarea name="address" rows="3" autocomplete="street-address" required placeholder="Jalan, nomor rumah, kelurahan, kecamatan, kota, kode pos"></textarea></label>
+        <label class="field-label">Catatan <span class="font-normal text-rau-muted">(opsional)</span><textarea name="note" rows="2" placeholder="Warna favorit, patokan alamat, atau catatan lainnya"></textarea></label>
+        <div class="flex items-center justify-between border-y border-rau-line py-4"><span class="text-sm">Total belanja</span><strong id="checkout-total" class="text-lg">Rp0</strong></div>
+        <button type="submit" class="button-dark w-full justify-center">Kirim Pesanan via WhatsApp <span>↗</span></button>
+        <p class="text-center text-[11px] leading-5 text-rau-muted">Dengan melanjutkan, WhatsApp akan terbuka dengan ringkasan pesanan yang siap dikirim ke admin RAU Lab.</p>
+      </form>
+    </div>
+  </section>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="script.js"></script>
+</body>
+</html>

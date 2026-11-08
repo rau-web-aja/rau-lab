@@ -3,73 +3,124 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RAU Lab - Official D2C Store</title>
+    <title>RAU Lab - Official E-Commerce Store</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
-    <!-- HEADER & NAVBAR -->
+    <!-- TOP BAR / PENGUMUMAN -->
+    <div class="top-bar">
+        <p>✨ Promo Spesial: Gratis Ongkir Seluruh Indonesia untuk Pembelian Min. 2 Produk! ✨</p>
+    </div>
+
+    <!-- NAVBAR UTAMA -->
     <header>
         <div class="container nav-container">
-            <h1 class="logo">RAU <span>Lab</span></h1>
-            <nav>
-                <a href="#about">Tentang Kami</a>
-                <a href="#products">Katalog (9 Varian)</a>
-                <div class="cart-icon" onclick="toggleCart()">🛒 Keranjang (<span id="cart-count">0</span>)</div>
+            <h1 class="logo" onclick="switchTab('home')">RAU <span>Lab</span></h1>
+            <nav class="nav-links">
+                <a href="#" onclick="switchTab('home')" class="nav-item active" id="nav-home">Beranda</a>
+                <a href="#" onclick="switchTab('products')" class="nav-item" id="nav-products">Produk</a>
+                <a href="#" onclick="switchTab('about')" class="nav-item" id="nav-about">Tentang Kami</a>
+                <a href="#" onclick="switchTab('shipping')" class="nav-item" id="nav-shipping">Pengiriman</a>
+                <a href="#" onclick="switchTab('returns')" class="nav-item" id="nav-returns">Retur & Refund</a>
+                <a href="#" onclick="switchTab('reviews')" class="nav-item" id="nav-reviews">Ulasan</a>
+                <a href="#" onclick="switchTab('contact')" class="nav-item" id="nav-contact">Kontak</a>
+                <a href="#" onclick="switchTab('orders')" class="nav-item" id="nav-orders">Pesanan Saya</a>
             </nav>
+            <div class="nav-actions">
+                <div class="account-btn" onclick="openAccountModal()">👤 Akun</div>
+                <div class="cart-icon" onclick="toggleCart()">🛒 Keranjang (<span id="cart-count">0</span>)</div>
+            </div>
         </div>
     </header>
 
-    <!-- HERO SECTION -->
-    <section class="hero">
-        <div class="container hero-content">
-            <h2>RAU Lab Lip Serum Brightening</h2>
-            <p>Perawatan bibir harian berformula ringan non-lengket, melembapkan tahan lama, dan mencerahkan alami.</p>
-            <a href="#products" class="btn-primary">Belanja Sekarang</a>
-        </div>
-    </section>
+    <!-- KONTEN UTAMA BERDASARKAN TAB -->
+    <main class="main-content">
 
-    <!-- ABOUT SECTION -->
-    <section id="about" class="about">
-        <div class="container">
-            <h3>Tentang RAU Lab</h3>
-            <p>Brand kecantikan lokal khusus pelajar dan mahasiswa. Menghadirkan inovasi 9 varian lip serum berkualitas tinggi dengan harga ramah di kantong.</p>
-        </div>
-    </section>
-
-    <!-- KATALOG 9 PRODUK -->
-    <section id="products" class="products">
-        <div class="container">
-            <h3 class="section-title">Katalog 9 Varian Produk (Rp35.000 / unit)</h3>
-            <div class="product-grid" id="product-list">
-                <!-- Produk akan dimuat otomatis via JavaScript -->
+        <!-- 1. BERANDA -->
+        <section id="tab-home" class="tab-pane active-pane">
+            <div class="hero">
+                <div class="container hero-content">
+                    <h2>RAU Lab Lip Serum Collection</h2>
+                    <p>Perawatan bibir harian berformula ringan, menutrisi intensif, dengan varian lengkap harga terjangkau (Rp35k - Rp43k).</p>
+                    <button class="btn-primary" onclick="switchTab('products')">Belanja Koleksi Sekarang</button>
+                </div>
             </div>
-        </div>
-    </section>
 
-    <!-- KERANJANG BELANJA MODAL -->
-    <div id="cart-modal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="toggleCart()">&times;</span>
-            <h3>Keranjang Belanja Kamu</h3>
-            <div id="cart-items">
-                <p>Keranjang masih kosong.</p>
+            <div class="container featured-section">
+                <h3 class="section-title">Varian Unggulan Pilihan</h3>
+                <div class="product-grid" id="featured-list"></div>
             </div>
-            <div class="cart-total">
-                <strong>Total: Rp <span id="total-price">0</span></strong>
+        </section>
+
+        <!-- 2. PRODUK (KATALOG 9 VARIAN DENGAN RANGE HARGA 35K - 43K) -->
+        <section id="tab-products" class="tab-pane">
+            <div class="container">
+                <h3 class="section-title">Katalog Lengkap (9 Varian Lip Serum)</h3>
+                <p class="section-subtitle">Temukan varian favoritmu dengan harga terbaik mulai dari Rp35.000 hingga Rp43.000.</p>
+                <div class="product-grid" id="product-list"></div>
             </div>
-            <button onclick="checkoutWA()" class="btn-checkout">Checkout via WhatsApp</button>
-        </div>
-    </div>
+        </section>
 
-    <!-- FOOTER -->
-    <footer>
-        <div class="container">
-            <p>&copy; 2026 RAU Lab Official D2C Store. All Rights Reserved.</p>
-        </div>
-    </footer>
+        <!-- 3. TENTANG KAMI -->
+        <section id="tab-about" class="tab-pane">
+            <div class="container static-page">
+                <h3>Tentang RAU Lab</h3>
+                <p>RAU Lab adalah brand kecantikan lokal D2C (Direct-to-Consumer) yang diformulasikan khusus untuk pelajar, mahasiswa, dan anak muda Indonesia.</p>
+                <p>Kami percaya bahwa perawatan bibir berkualitas tinggi tidak harus mahal. Dengan riset formula yang aman, halal, dan bahan-bahan pilihan, ke-9 varian lip serum kami siap menjaga kelembapan bibirmu seharian penuh tanpa rasa lengket.</p>
+            </div>
+        </section>
 
-    <script src="script.js"></script>
-</body>
-</html>
+        <!-- 4. PENGIRIMAN -->
+        <section id="tab-shipping" class="tab-pane">
+            <div class="container static-page">
+                <h3>Informasi Pengiriman</h3>
+                <ul>
+                    <li><strong>Kurir Partner:</strong> JNE, J&T Express, SiCepat, dan AnterAja.</li>
+                    <li><strong>Estimasi Waktu:</strong> Reguler (2-4 hari kerja), Instant/SameDay (khusus wilayah tertentu).</li>
+                    <li><strong>Biaya Kirim:</strong> Dihitung otomatis saat checkout atau klaim promo gratis ongkir dengan minimum pembelian.</li>
+                    <li><strong>Resi Pengiriman:</strong> Nomor resi akan diperbarui otomatis ke menu "Pesanan Saya" maksimal 1x24 jam setelah pembayaran dikonfirmasi.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- 5. RETUR & REFUND -->
+        <section id="tab-returns" class="tab-pane">
+            <div class="container static-page">
+                <h3>Kebijakan Retur & Refund</h3>
+                <p>Kepuasan pelanggan adalah prioritas kami. Jika produk yang kamu terima rusak, cacat produksi, atau salah varian, ikuti ketentuan berikut:</p>
+                <ul>
+                    <li>Wajib menyertakan video unboxing tanpa terputus sejak paket diterima dan dibuka.</li>
+                    <li>Pengajuan retur maksimal 2 hari setelah paket sampai di tujuan.</li>
+                    <li>Produk pengganti akan dikirimkan ulang atau dana dikembalikan (refund) penuh setelah verifikasi admin via WhatsApp selesai.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- 6. ULASAN -->
+        <section id="tab-reviews" class="tab-pane">
+            <div class="container static-page">
+                <h3>Ulasan Pelanggan Setia</h3>
+                <div class="review-grid">
+                    <div class="review-card">
+                        <p class="stars">⭐⭐⭐⭐⭐</p>
+                        <p class="review-text">"Sumpah inisial varian Honey Glow bener-bener bikin bibir lembap semalaman! Gak pecah-pecah lagi pas bangun tidur."</p>
+                        <span class="review-author">- Sarah, Mahasiswa Salatiga</span>
+                    </div>
+                    <div class="review-card">
+                        <p class="stars">⭐⭐⭐⭐⭐</p>
+                        <p class="review-text">"Warnanya natural banget di bibir, gak kelihatan menor tapi tetep fresh buat kuliah."</p>
+                        <span class="review-author">- Dinda A., Semarang</span>
+                    </div>
+                    <div class="review-card">
+                        <p class="stars">⭐⭐⭐⭐⭐</p>
+                        <p class="review-text">"Pengirimannya cepat banget dan adminnya ramah parah. Bakal langganan terus sih!"</p>
+                        <span class="review-author">- Fajar R., Bandung</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 7. KONTAK -->
+        <section id="tab-contact"

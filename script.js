@@ -4,15 +4,15 @@
 const WHATSAPP_NUMBER = "6281234567890"; // Ganti jika nomor admin berubah
 const CART_KEY = "rauLabCart";
 const products = [
-  { id:"original-clear", name:"RAU Lab Original Clear", variant:"Original Clear", price:35000, description:"Kilau bening untuk tampilan natural.", tag:"EVERYDAY ESSENTIAL", image:"images/original-clear.webp" },
-  { id:"coffee-scrub", name:"RAU Lab Coffee Scrub", variant:"Coffee Scrub", price:36000, description:"Nuansa hangat untuk daily look.", tag:"WARM MOOD", image:"images/coffee-scrub.webp" },
-  { id:"rose-pink", name:"RAU Lab Rose Pink", variant:"Rose Pink", price:37000, description:"Pink lembut yang manis dan fresh.", tag:"SOFT PINK", image:"images/rose-pink.webp" },
-  { id:"peach-nude", name:"RAU Lab Peach Nude", variant:"Peach Nude", price:38000, description:"Peach nude untuk kesan effortless.", tag:"NUDE GLOW", image:"images/peach-nude.webp" },
-  { id:"mint-fresh", name:"RAU Lab Mint Fresh", variant:"Mint Fresh", price:38000, description:"Pilihan clean untuk ritual harian.", tag:"FRESH PICK", image:"images/mint-fresh.webp" },
-  { id:"honey-glow", name:"RAU Lab Honey Glow", variant:"Honey Glow", price:39000, description:"Sentuhan hangat dengan kilau lembut.", tag:"GOLDEN HOUR", image:"images/honey-glow.webp" },
-  { id:"cherry-red", name:"RAU Lab Cherry Red", variant:"Cherry Red", price:40000, description:"Merah cerah untuk mood yang berani.", tag:"BOLD MOOD", image:"images/cherry-red.webp" },
-  { id:"berry-plump", name:"RAU Lab Berry Plump", variant:"Berry Plump", price:41000, description:"Berry tone yang playful dan modern.", tag:"BERRY TONE", image:"images/berry-plump.webp" },
-  { id:"golden-gleam", name:"RAU Lab Golden Gleam", variant:"Golden Gleam", price:43000, description:"Kilau ekstra untuk momen spesial.", tag:"SPECIAL GLOW", image:"images/golden-gleam.webp" }
+  { id:"original-clear", name:"RAU Lab Original Clear", variant:"Original Clear", price:35000, description:"Kilau bening untuk tampilan natural.", tag:"EVERYDAY ESSENTIAL", image:"original-clear.webp" },
+  { id:"coffee-scrub", name:"RAU Lab Coffee Scrub", variant:"Coffee Scrub", price:36000, description:"Nuansa hangat untuk daily look.", tag:"WARM MOOD", image:"coffee-scrub.webp" },
+  { id:"rose-pink", name:"RAU Lab Rose Pink", variant:"Rose Pink", price:37000, description:"Pink lembut yang manis dan fresh.", tag:"SOFT PINK", image:"rose-pink.webp" },
+  { id:"peach-nude", name:"RAU Lab Peach Nude", variant:"Peach Nude", price:38000, description:"Peach nude untuk kesan effortless.", tag:"NUDE GLOW", image:"peach-nude.webp" },
+  { id:"mint-fresh", name:"RAU Lab Mint Fresh", variant:"Mint Fresh", price:38000, description:"Pilihan clean untuk ritual harian.", tag:"FRESH PICK", image:"mint-fresh.webp" },
+  { id:"honey-glow", name:"RAU Lab Honey Glow", variant:"Honey Glow", price:39000, description:"Sentuhan hangat dengan kilau lembut.", tag:"GOLDEN HOUR", image:"honey-glow.webp" },
+  { id:"cherry-red", name:"RAU Lab Cherry Red", variant:"Cherry Red", price:40000, description:"Merah cerah untuk mood yang berani.", tag:"BOLD MOOD", image:"cherry-red.webp" },
+  { id:"berry-plump", name:"RAU Lab Berry Plump", variant:"Berry Plump", price:41000, description:"Berry tone yang playful dan modern.", tag:"BERRY TONE", image:"berry-plump.webp" },
+  { id:"golden-gleam", name:"RAU Lab Golden Gleam", variant:"Golden Gleam", price:43000, description:"Kilau ekstra untuk momen spesial.", tag:"SPECIAL GLOW", image:"golden-gleam.webp" }
 ];
 // Supabase: isi URL project dan publishable/anon key dari Dashboard > Project Settings > API.
 // JANGAN PERNAH memasukkan service_role/secret key ke website frontend.
